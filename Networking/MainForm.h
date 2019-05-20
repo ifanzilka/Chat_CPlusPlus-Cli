@@ -11,23 +11,23 @@ namespace WindowsForms {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Сводка для MainForm
+	/// РЎРІРѕРґРєР° РґР»СЏ MainForm
 	/// </summary>
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
-		void Connect()//пытаемся поделючится
+		void Connect()//РїС‹С‚Р°РµРјСЃСЏ РїРѕРґРµР»СЋС‡РёС‚СЃСЏ
 		{
 			try {
-				c = gcnew Client(tbAddress->Text);//берем адрес сервера из формы
-				c->OnLoginResult += gcnew LoginHandler(this, &MainForm::LoginResponse);//событие
-				c->OnMessageReceived += gcnew MessageHandler(this, &MainForm::MessageReceived);//событие
+				c = gcnew Client(tbAddress->Text);//Р±РµСЂРµРј Р°РґСЂРµСЃ СЃРµСЂРІРµСЂР° РёР· С„РѕСЂРјС‹
+				c->OnLoginResult += gcnew LoginHandler(this, &MainForm::LoginResponse);//СЃРѕР±С‹С‚РёРµ
+				c->OnMessageReceived += gcnew MessageHandler(this, &MainForm::MessageReceived);//СЃРѕР±С‹С‚РёРµ
 				connected = true;
-				btnSend->Text = "Войти";//если вошли меняем надпись на конпке
+				btnSend->Text = "Р’РѕР№С‚Рё";//РµСЃР»Рё РІРѕС€Р»Рё РјРµРЅСЏРµРј РЅР°РґРїРёСЃСЊ РЅР° РєРѕРЅРїРєРµ
 			}
 			catch (Exception^ ex)
 			{
-				tbChat->Text += ex->Message + "\r\n";//если не вошли то в чат выводим ощибку
+				tbChat->Text += ex->Message + "\r\n";//РµСЃР»Рё РЅРµ РІРѕС€Р»Рё С‚Рѕ РІ С‡Р°С‚ РІС‹РІРѕРґРёРј РѕС‰РёР±РєСѓ
 				c = nullptr;
 			}
 		}
@@ -39,7 +39,7 @@ namespace WindowsForms {
 
 	protected:
 		/// <summary>
-		/// Освободить все используемые ресурсы.
+		/// РћСЃРІРѕР±РѕРґРёС‚СЊ РІСЃРµ РёСЃРїРѕР»СЊР·СѓРµРјС‹Рµ СЂРµСЃСѓСЂСЃС‹.
 		/// </summary>
 		~MainForm()
 		{
@@ -61,14 +61,14 @@ namespace WindowsForms {
 
 	private:
 		/// <summary>
-		/// Обязательная переменная конструктора.
+		/// РћР±СЏР·Р°С‚РµР»СЊРЅР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°.
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
-		/// Требуемый метод для поддержки конструктора — не изменяйте 
-		/// содержимое этого метода с помощью редактора кода.
+		/// РўСЂРµР±СѓРµРјС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїРѕРґРґРµСЂР¶РєРё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° вЂ” РЅРµ РёР·РјРµРЅСЏР№С‚Рµ 
+		/// СЃРѕРґРµСЂР¶РёРјРѕРµ СЌС‚РѕРіРѕ РјРµС‚РѕРґР° СЃ РїРѕРјРѕС‰СЊСЋ СЂРµРґР°РєС‚РѕСЂР° РєРѕРґР°.
 		/// </summary>
 		void InitializeComponent(void)
 		{
@@ -97,7 +97,7 @@ namespace WindowsForms {
 			this->btnSend->Name = L"btnSend";
 			this->btnSend->Size = System::Drawing::Size(144, 28);
 			this->btnSend->TabIndex = 1;
-			this->btnSend->Text = L"Подключится";
+			this->btnSend->Text = L"РџРѕРґРєР»СЋС‡РёС‚СЃСЏ";
 			this->btnSend->UseVisualStyleBackColor = true;
 			this->btnSend->Click += gcnew System::EventHandler(this, &MainForm::btnSend_Click);
 			// 
@@ -118,7 +118,7 @@ namespace WindowsForms {
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(110, 17);
 			this->label1->TabIndex = 3;
-			this->label1->Text = L"Адрес сервера:";
+			this->label1->Text = L"РђРґСЂРµСЃ СЃРµСЂРІРµСЂР°:";
 			// 
 			// tbAddress
 			// 
@@ -169,12 +169,12 @@ namespace WindowsForms {
 			else {
 				if (result)
 				{
-					btnSend->Text = "Отправить";
+					btnSend->Text = "РћС‚РїСЂР°РІРёС‚СЊ";
 					logged = true;
 				}
 				else
 				{
-					tbChat->Text += "Не удалось войти с указанным ником." + "\r\n";
+					tbChat->Text += "РќРµ СѓРґР°Р»РѕСЃСЊ РІРѕР№С‚Рё СЃ СѓРєР°Р·Р°РЅРЅС‹Рј РЅРёРєРѕРј." + "\r\n";
 				}
 			}
 		}
@@ -195,7 +195,7 @@ namespace WindowsForms {
 		}
 
 	private: System::Void MainForm_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e) {
-		c->Stop();//если закрыли обрываем связ
+		c->Stop();//РµСЃР»Рё Р·Р°РєСЂС‹Р»Рё РѕР±СЂС‹РІР°РµРј СЃРІСЏР·
 	}
 };
 }

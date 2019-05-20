@@ -1,28 +1,28 @@
 #include "Server.h"
 
-Server::Server()//конструктор (когда запустили сервер)
+Server::Server()//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ (РєРѕРіРґР° Р·Р°РїСѓСЃС‚РёР»Рё СЃРµСЂРІРµСЂ)
 {
 	Socket^ sSocket = gcnew Socket(
 		SocketType::Stream,
-		ProtocolType::Tcp//протокол соединения
+		ProtocolType::Tcp//РїСЂРѕС‚РѕРєРѕР» СЃРѕРµРґРёРЅРµРЅРёСЏ
 	);
 	try
 	{
 		sSocket->Bind(
 			gcnew IPEndPoint(
-				Dns::GetHostEntry(host)->AddressList[0],//первый ip
+				Dns::GetHostEntry(host)->AddressList[0],//РїРµСЂРІС‹Р№ ip
 				port
 			)
 		);
 		sSocket->Listen(10);//
 		while (true) {
-			Socket^ cSocket = sSocket->Accept();//ждем подключения Acceept возвращает клиентский сокет
-			gcnew ClientModel(cSocket, clients);//если кто то соединился создаем клиента
+			Socket^ cSocket = sSocket->Accept();//Р¶РґРµРј РїРѕРґРєР»СЋС‡РµРЅРёСЏ Acceept РІРѕР·РІСЂР°С‰Р°РµС‚ РєР»РёРµРЅС‚СЃРєРёР№ СЃРѕРєРµС‚
+			gcnew ClientModel(cSocket, clients);//РµСЃР»Рё РєС‚Рѕ С‚Рѕ СЃРѕРµРґРёРЅРёР»СЃСЏ СЃРѕР·РґР°РµРј РєР»РёРµРЅС‚Р°
 		}
 	}
 	catch (Exception^ ex)
 	{
-		Console::WriteLine("Что-то пошло не так... " + ex->Message);
+		Console::WriteLine("Р§С‚Рѕ-С‚Рѕ РїРѕС€Р»Рѕ РЅРµ С‚Р°Рє... " + ex->Message);
 		Console::ReadLine();
 	}
 }
@@ -32,19 +32,19 @@ Server::~Server()
 }
 
 
-ClientModel::ClientModel(Socket^ s, List<ClientModel^>^ clients)//конструктор клиента
+ClientModel::ClientModel(Socket^ s, List<ClientModel^>^ clients)//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»РёРµРЅС‚Р°
 {
 	socket = s;
 	name = "Anonymous";
 	this->clients = clients;
-	clients->Add(this);//добавляем в список клиентов
-	ThreadStart^ ts = gcnew ThreadStart(this, &ClientModel::Communicate);//выделяем поток для общения
+	clients->Add(this);//РґРѕР±Р°РІР»СЏРµРј РІ СЃРїРёСЃРѕРє РєР»РёРµРЅС‚РѕРІ
+	ThreadStart^ ts = gcnew ThreadStart(this, &ClientModel::Communicate);//РІС‹РґРµР»СЏРµРј РїРѕС‚РѕРє РґР»СЏ РѕР±С‰РµРЅРёСЏ
 	Thread^ t = gcnew Thread(ts);
 	active = true;
 	t->Start();
 }
 
-void ClientModel::ParseData(String^ req)//разбираем строку
+void ClientModel::ParseData(String^ req)//СЂР°Р·Р±РёСЂР°РµРј СЃС‚СЂРѕРєСѓ
 {
 	if (!req || req->Trim()->Equals("")) return;
 	array<String^>^ sep = { ":" };
@@ -66,11 +66,11 @@ void ClientModel::ParseData(String^ req)//разбираем строку
 void ClientModel::SendData(String^ data)
 {
 	try {
-		if (!socket || !socket->Connected) throw gcnew Exception();//проверяем подключен ли клиент
-		if (!data || data->Trim()->Equals("")) data = "\0";//проверям пустая строка или нет
-		array<Byte>^ b = Encoding::UTF8->GetBytes(data);//строку в байты
+		if (!socket || !socket->Connected) throw gcnew Exception();//РїСЂРѕРІРµСЂСЏРµРј РїРѕРґРєР»СЋС‡РµРЅ Р»Рё РєР»РёРµРЅС‚
+		if (!data || data->Trim()->Equals("")) data = "\0";//РїСЂРѕРІРµСЂСЏРј РїСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР° РёР»Рё РЅРµС‚
+		array<Byte>^ b = Encoding::UTF8->GetBytes(data);//СЃС‚СЂРѕРєСѓ РІ Р±Р°Р№С‚С‹
 		Console::WriteLine("Sending: {0}", data);
-		socket->Send(b);//отпраыляем этому сокету
+		socket->Send(b);//РѕС‚РїСЂР°С‹Р»СЏРµРј СЌС‚РѕРјСѓ СЃРѕРєРµС‚Сѓ
 		Console::WriteLine("Sent");
 	}
 	catch (Exception^ ex)
@@ -80,15 +80,15 @@ void ClientModel::SendData(String^ data)
 	}
 }
 
-String^ ClientModel::ReceiveData()//если получили байты то преобразуем в строку
+String^ ClientModel::ReceiveData()//РµСЃР»Рё РїРѕР»СѓС‡РёР»Рё Р±Р°Р№С‚С‹ С‚Рѕ РїСЂРµРѕР±СЂР°Р·СѓРµРј РІ СЃС‚СЂРѕРєСѓ
 {
 	String^ res = "";
 	try {
 		if (!socket || !socket->Connected) throw gcnew Exception();
 		auto b = gcnew array<Byte>(65536);
 		int bc = socket->Receive(b, 0, 65535, SocketFlags::None);
-		res = Encoding::UTF8->GetString(b, 0, bc);//переводим строку в байты
-		Console::WriteLine("Request: {0}", res);//пишем полученное сообщение в командной строке
+		res = Encoding::UTF8->GetString(b, 0, bc);//РїРµСЂРµРІРѕРґРёРј СЃС‚СЂРѕРєСѓ РІ Р±Р°Р№С‚С‹
+		Console::WriteLine("Request: {0}", res);//РїРёС€РµРј РїРѕР»СѓС‡РµРЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ РІ РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРµ
 		return res;
 	}
 	catch (Exception^ ex) {
@@ -101,36 +101,36 @@ String^ ClientModel::ReceiveData()//если получили байты то преобразуем в строку
 void ClientModel::Communicate()
 {
 	if (!socket) return;
-	Console::WriteLine("Starting communication");//начали общение с клиентом
+	Console::WriteLine("Starting communication");//РЅР°С‡Р°Р»Рё РѕР±С‰РµРЅРёРµ СЃ РєР»РёРµРЅС‚РѕРј
 	while (active) {
-		Console::WriteLine("Receiving request...");//ждем команды от клиента
+		Console::WriteLine("Receiving request...");//Р¶РґРµРј РєРѕРјР°РЅРґС‹ РѕС‚ РєР»РёРµРЅС‚Р°
 		auto req = ReceiveData();
 		ParseData(req);
 	}
 }
 
-void ClientModel::Login(String^ data)//если пришла комнда с логином
+void ClientModel::Login(String^ data)//РµСЃР»Рё РїСЂРёС€Р»Р° РєРѕРјРЅРґР° СЃ Р»РѕРіРёРЅРѕРј
 {
 	bool ok = true;
-	for each(ClientModel^ c in clients)//проверям нет ли такого логина
+	for each(ClientModel^ c in clients)//РїСЂРѕРІРµСЂСЏРј РЅРµС‚ Р»Рё С‚Р°РєРѕРіРѕ Р»РѕРіРёРЅР°
 	{
 		if (c->Name->Equals(data))
 		{
 			ok = false;
-			SendData("Login: Failed. Client already logged in.");//если есть то отправляем сообщение
+			SendData("Login: Failed. Client already logged in.");//РµСЃР»Рё РµСЃС‚СЊ С‚Рѕ РѕС‚РїСЂР°РІР»СЏРµРј СЃРѕРѕР±С‰РµРЅРёРµ
 			break;
 		}
 	}
-	if (ok) {//если нету то 
+	if (ok) {//РµСЃР»Рё РЅРµС‚Сѓ С‚Рѕ 
 		SendData("Login: OK");
 		name = data;
-		SendMessage(name + " вошёл в чат...");
+		SendMessage(name + " РІРѕС€С‘Р» РІ С‡Р°С‚...");
 	}
 }
 
-void ClientModel::SendMessage(String^ data)//отправка сообщения
+void ClientModel::SendMessage(String^ data)//РѕС‚РїСЂР°РІРєР° СЃРѕРѕР±С‰РµРЅРёСЏ
 {
-	for each(ClientModel^ c in clients)//отправлям всем сокетам из списка
+	for each(ClientModel^ c in clients)//РѕС‚РїСЂР°РІР»СЏРј РІСЃРµРј СЃРѕРєРµС‚Р°Рј РёР· СЃРїРёСЃРєР°
 	{
 		c->SendData("Message:" + data);
 	}

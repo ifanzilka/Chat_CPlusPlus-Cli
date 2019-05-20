@@ -1,13 +1,13 @@
 #include "Client.h"
 
-void Client::SendData(String^ data)//переводим строку в байты и отправляем
+void Client::SendData(String^ data)//РїРµСЂРµРІРѕРґРёРј СЃС‚СЂРѕРєСѓ РІ Р±Р°Р№С‚С‹ Рё РѕС‚РїСЂР°РІР»СЏРµРј
 {
-	if (!socket) return;//если есть подключение
+	if (!socket) return;//РµСЃР»Рё РµСЃС‚СЊ РїРѕРґРєР»СЋС‡РµРЅРёРµ
 	try {
 		if (!data || data->Trim()->Equals("")) data = "\0";
-		array<Byte>^ b = Encoding::UTF8->GetBytes(data);//строки переводим в байты
+		array<Byte>^ b = Encoding::UTF8->GetBytes(data);//СЃС‚СЂРѕРєРё РїРµСЂРµРІРѕРґРёРј РІ Р±Р°Р№С‚С‹
 		Console::WriteLine("Sending: {0}", data);
-		socket->Send(b);//отправляем байты
+		socket->Send(b);//РѕС‚РїСЂР°РІР»СЏРµРј Р±Р°Р№С‚С‹
 		Console::WriteLine("Sent");
 	}
 	catch (...)
@@ -16,12 +16,12 @@ void Client::SendData(String^ data)//переводим строку в байты и отправляем
 	}
 }
 
-String^ Client::ReceiveData()//получаем из байтов строку
+String^ Client::ReceiveData()//РїРѕР»СѓС‡Р°РµРј РёР· Р±Р°Р№С‚РѕРІ СЃС‚СЂРѕРєСѓ
 {
 	if (!socket) return "";
 	String^ res = "";
 	try {
-		auto b = gcnew array<Byte>(65536);//автоматически определяем тип
+		auto b = gcnew array<Byte>(65536);//Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РѕРїСЂРµРґРµР»СЏРµРј С‚РёРї
 		int bc = socket->Receive(b, 0, 65535, SocketFlags::None);
 		res = Encoding::UTF8->GetString(b, 0, bc);
 		Console::WriteLine("Response: {0}", res);
@@ -33,16 +33,16 @@ String^ Client::ReceiveData()//получаем из байтов строку
 	}
 }
 
-void Client::ParseCommand(String^ req)//разбираем команду
+void Client::ParseCommand(String^ req)//СЂР°Р·Р±РёСЂР°РµРј РєРѕРјР°РЅРґСѓ
 {
 	if (!req || req->Trim()->Equals("")) return;
 	array<String^>^ sep = { ":" };
-	array<String^>^ parts = req->Split(sep, 2, StringSplitOptions::None);//разбираем полученную строку на две строки и закидываем в массив (разделяем с ':')
-	if (parts[0]->ToUpper()->Equals("LOGIN"))//если первый элемент логин 
+	array<String^>^ parts = req->Split(sep, 2, StringSplitOptions::None);//СЂР°Р·Р±РёСЂР°РµРј РїРѕР»СѓС‡РµРЅРЅСѓСЋ СЃС‚СЂРѕРєСѓ РЅР° РґРІРµ СЃС‚СЂРѕРєРё Рё Р·Р°РєРёРґС‹РІР°РµРј РІ РјР°СЃСЃРёРІ (СЂР°Р·РґРµР»СЏРµРј СЃ ':')
+	if (parts[0]->ToUpper()->Equals("LOGIN"))//РµСЃР»Рё РїРµСЂРІС‹Р№ СЌР»РµРјРµРЅС‚ Р»РѕРіРёРЅ 
 	{
 		OnLoginResult(parts[1]->Contains("OK"));
 	}
-	else if (parts[0]->ToUpper()->Equals("MESSAGE"))//если первый элемент сообщение
+	else if (parts[0]->ToUpper()->Equals("MESSAGE"))//РµСЃР»Рё РїРµСЂРІС‹Р№ СЌР»РµРјРµРЅС‚ СЃРѕРѕР±С‰РµРЅРёРµ
 	{
 		array<String^>^ am = parts[1]->Split(sep, 2, StringSplitOptions::None);
 		if (am->Length > 1) {
@@ -50,7 +50,7 @@ void Client::ParseCommand(String^ req)//разбираем команду
 		}
 		else
 		{
-			OnMessageReceived("ЧатБот", am[0]);
+			OnMessageReceived("Р§Р°С‚Р‘РѕС‚", am[0]);
 		}
 	}
 }
@@ -60,13 +60,13 @@ void Client::Communicate()
 	if (!socket) return;
 	Console::WriteLine("Starting communication");
 	while (active) {
-		Console::WriteLine("Receiving response...");//получение ответа
-		auto req = ReceiveData();//получение сообщения
+		Console::WriteLine("Receiving response...");//РїРѕР»СѓС‡РµРЅРёРµ РѕС‚РІРµС‚Р°
+		auto req = ReceiveData();//РїРѕР»СѓС‡РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ
 		ParseCommand(req);
 	}
 }
 
-Client::Client(String^ serverHost)//конструктор
+Client::Client(String^ serverHost)//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 {
 	socket = gcnew Socket(
 		SocketType::Stream,
@@ -74,26 +74,26 @@ Client::Client(String^ serverHost)//конструктор
 	);
 	this->serverHost = serverHost;
 	socket->Connect(this->serverHost, port);
-	ThreadStart^ th = gcnew ThreadStart(this, &Client::Communicate);//выделяем поток
+	ThreadStart^ th = gcnew ThreadStart(this, &Client::Communicate);//РІС‹РґРµР»СЏРµРј РїРѕС‚РѕРє
 	Thread^ t = gcnew Thread(th);
 	active = true;
-	t->Start();//запускаем поток
-	if (!socket->Connected)//если не соединились
+	t->Start();//Р·Р°РїСѓСЃРєР°РµРј РїРѕС‚РѕРє
+	if (!socket->Connected)//РµСЃР»Рё РЅРµ СЃРѕРµРґРёРЅРёР»РёСЃСЊ
 	{
 		socket = nullptr;
-		throw gcnew Exception("Ошибка соединения");
+		throw gcnew Exception("РћС€РёР±РєР° СЃРѕРµРґРёРЅРµРЅРёСЏ");
 	}
 }
 
-void Client::Login(String^ name)//отправляем на серврел логин и там проверка
+void Client::Login(String^ name)//РѕС‚РїСЂР°РІР»СЏРµРј РЅР° СЃРµСЂРІСЂРµР» Р»РѕРіРёРЅ Рё С‚Р°Рј РїСЂРѕРІРµСЂРєР°
 {
-	if (name->Equals("Login")|| name->Equals(" ")) name = "Anonymous";//есои не указали имя то будет аноним
+	if (name->Equals("Login")|| name->Equals(" ")) name = "Anonymous";//РµСЃРѕРё РЅРµ СѓРєР°Р·Р°Р»Рё РёРјСЏ С‚Рѕ Р±СѓРґРµС‚ Р°РЅРѕРЅРёРј
 	SendData("Login:" + name);
 }
 
 void Client::SendMessage(String^ message)
 {
-	SendData("Message:" + message);//отправляем строку
+	SendData("Message:" + message);//РѕС‚РїСЂР°РІР»СЏРµРј СЃС‚СЂРѕРєСѓ
 }
 
 void Client::Stop()
@@ -104,7 +104,7 @@ void Client::Stop()
 		active = false;
 		if (socket)
 		{
-			socket->Shutdown(SocketShutdown::Both);//закрываем соединение
+			socket->Shutdown(SocketShutdown::Both);//Р·Р°РєСЂС‹РІР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ
 			socket->Disconnect(false);
 			socket->Close();
 		}

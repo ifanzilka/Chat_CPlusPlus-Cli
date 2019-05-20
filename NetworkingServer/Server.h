@@ -10,21 +10,21 @@ delegate void CommandHandler(List<String^>^ data);
 
 ref class ClientModel
 {
-	Socket^ socket;//само подключение
+	Socket^ socket;//СЃР°РјРѕ РїРѕРґРєР»СЋС‡РµРЅРёРµ
 	String^ name;
-	List<ClientModel^>^ clients;//cписок клиентов
+	List<ClientModel^>^ clients;//cРїРёСЃРѕРє РєР»РёРµРЅС‚РѕРІ
 	bool active = false;
 public:
-	ClientModel(Socket^ s, List<ClientModel^>^ clients);//конструктор моделей коиентов
+	ClientModel(Socket^ s, List<ClientModel^>^ clients);//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РјРѕРґРµР»РµР№ РєРѕРёРµРЅС‚РѕРІ
 private:
-	void ParseData(String^ req);//разбираем строку
+	void ParseData(String^ req);//СЂР°Р·Р±РёСЂР°РµРј СЃС‚СЂРѕРєСѓ
 	void Communicate();
-	void SendData(String^ data);//отправляем строку
-	String^ ReceiveData();//получаям строку из полученных байтов
+	void SendData(String^ data);//РѕС‚РїСЂР°РІР»СЏРµРј СЃС‚СЂРѕРєСѓ
+	String^ ReceiveData();//РїРѕР»СѓС‡Р°СЏРј СЃС‚СЂРѕРєСѓ РёР· РїРѕР»СѓС‡РµРЅРЅС‹С… Р±Р°Р№С‚РѕРІ
 	void Login(String^ data);
 	void SendMessage(String^ msg);
 	void Stop();
-	void ShutDownClient(String^ data)//обрываем соединение
+	void ShutDownClient(String^ data)//РѕР±СЂС‹РІР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ
 	{
 		try
 		{
@@ -53,7 +53,7 @@ ref class Server
 {
 	int port = 5703;
 	String^ host = "127.0.0.1";
-	List<ClientModel^>^ clients = gcnew List<ClientModel^>();//список клинетов
+	List<ClientModel^>^ clients = gcnew List<ClientModel^>();//СЃРїРёСЃРѕРє РєР»РёРЅРµС‚РѕРІ
 public:
 	Server();
 	virtual ~Server();

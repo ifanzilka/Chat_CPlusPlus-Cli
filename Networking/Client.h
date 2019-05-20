@@ -13,18 +13,18 @@ ref class Client
 {
 	String^ serverHost;
 	int port = 5703;
-	Socket^ socket;//подключение
+	Socket^ socket;//РїРѕРґРєР»СЋС‡РµРЅРёРµ
 	bool active = false;
 	String^ name = "Anonymous";
-	void SendData(String^ data);//переводим строку в байты и отправляем
-	String^ ReceiveData();//получаем из байтов строку
-	void ParseCommand(String^ req);//разютраем строку
-	void Communicate();//обзение
+	void SendData(String^ data);//РїРµСЂРµРІРѕРґРёРј СЃС‚СЂРѕРєСѓ РІ Р±Р°Р№С‚С‹ Рё РѕС‚РїСЂР°РІР»СЏРµРј
+	String^ ReceiveData();//РїРѕР»СѓС‡Р°РµРј РёР· Р±Р°Р№С‚РѕРІ СЃС‚СЂРѕРєСѓ
+	void ParseCommand(String^ req);//СЂР°Р·СЋС‚СЂР°РµРј СЃС‚СЂРѕРєСѓ
+	void Communicate();//РѕР±Р·РµРЅРёРµ
 public:
-	event MessageHandler^ OnMessageReceived;//союытие получения сообщения
-	event LoginHandler^ OnLoginResult;//событие
-	Client(String^ serverHost);//конструктор
-	void Login(String^ name);//отправляем на сервер логин и там проверям
+	event MessageHandler^ OnMessageReceived;//СЃРѕСЋС‹С‚РёРµ РїРѕР»СѓС‡РµРЅРёСЏ СЃРѕРѕР±С‰РµРЅРёСЏ
+	event LoginHandler^ OnLoginResult;//СЃРѕР±С‹С‚РёРµ
+	Client(String^ serverHost);//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+	void Login(String^ name);//РѕС‚РїСЂР°РІР»СЏРµРј РЅР° СЃРµСЂРІРµСЂ Р»РѕРіРёРЅ Рё С‚Р°Рј РїСЂРѕРІРµСЂСЏРј
 	void SendMessage(String^ message);
 	void Stop();
 	virtual ~Client();
